@@ -1,0 +1,314 @@
+tags:
+- name: users
+  description: users API
+
+paths:
+# [GET] users
+  /users:
+    get:
+      tags:
+      - users
+      summary: Find All Users
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+    post:
+      tags:
+      - users
+      summary: Add User
+      parameters:
+      - name: body
+        in: body
+        description: user Data
+        required: true
+        schema:
+          $ref: '#/definitions/users'
+      responses:
+        201:
+          description: 'Created'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+# [GET] user
+  /users/{id}:
+    get:
+      tags:
+      - users
+      summary: Find User
+      parameters:
+      - name: id
+        in: path
+        description: user Data
+        required: true
+        schema:
+          $ref: '#/definitions/users'
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad Request'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+
+# [PUT] user
+    put:
+      tags:
+      - users
+      summary: Update User
+      parameters:
+      - name: id
+        in: path
+        description: user Id
+        required: true
+        type: integer
+      - name: body
+        in: body
+        description: user Data
+        required: true
+        schema:
+          $ref: '#/definitions/users'
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad Request'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+# [DELETE] user
+    delete:
+      tags:
+      - users
+      summary: Delete User
+      parameters:
+      - name: id
+        in: path
+        description: user Data
+        required: true
+        schema:
+          $ref: '#/definitions/users'
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad Request'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'   
+
+# [GET] books
+  /books:
+    get:
+      tags:
+      - books
+      summary: Find All Books
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+# [POST] book
+    post:
+      tags:
+      - books
+      summary: Add Book
+      parameters:
+      - name: body
+        in: body
+        description: book Data
+        required: true
+        schema:
+          $ref: '#/definitions/books'
+      responses:
+        201:
+          description: 'Created'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+# [GET] book
+  /books/{id}:
+    get:
+      tags:
+      - books
+      summary: Find Book
+      parameters:
+      - name: id
+        in: path
+        description: book Data
+        required: true
+        schema:
+          $ref: '#/definitions/books'
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad Request'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+# [DELETE] book
+    delete:
+      tags:
+      - books
+      summary: Delete Book
+      parameters:
+      - name: id
+        in: path
+        description: book Data
+        required: true
+        schema:
+          $ref: '#/definitions/books'
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad Request'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'   
+# [PUT] book
+    put:
+      tags:
+      - books
+      summary: Update Book
+      parameters:
+      - name: id
+        in: path
+        description: book Id
+        required: true
+        type: integer
+      - name: body
+        in: body
+        description: book Data
+        required: true
+        schema:
+          $ref: '#/definitions/books'
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad Request'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+      
+
+# [GET] assigns
+  /assigns:
+    get:
+      tags:
+      - assigns
+      summary: Find All Assigns
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+# [POST] assign
+    post:
+      tags:
+      - assign
+      summary: Add Assign
+      parameters:
+      - name: body
+        in: body
+        description: assign Data
+        required: true
+        schema:
+          $ref: '#/definitions/assigns'
+      responses:
+        201:
+          description: 'Created'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+# [DELETE] assign
+  /assigns/{id}:
+    delete:
+      tags:
+      - assigns
+      summary: Delete Assign
+      parameters:
+      - name: id
+        in: path
+        description: assign Data
+        required: true
+        schema:
+          $ref: '#/definitions/assigns'
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad Request'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'     
+# definitions
+definitions:
+  users:
+    type: object
+    required:
+        - email
+        - firstName  
+        - lastName 
+    properties:
+      email:
+        type: string
+        description: user Email
+      firstName:
+        type: string
+        description: user First Name
+      lastName:
+        type: string
+        description: user Last Name
+  books:
+    type: object
+    required:
+        - email
+        - firstName  
+        - lastName 
+    properties:
+      title:
+        type: string
+        description: book Title
+      author:
+        type: string
+        description: book Author
+      description:
+        type: string
+        description: book Description
+  assigns:
+    type: object
+    required:
+        - bookId
+        - userId  
+    properties:
+      bookId:
+        type: integer
+        description: book bookId
+      userId:
+        type: integer
+        description: book userId
+
+schemes:
+ - https
+ - http
