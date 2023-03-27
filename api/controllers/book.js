@@ -1,4 +1,5 @@
-const { Book } = require("@models");
+const { Op } = require("sequelize");
+const { Book, Assign } = require("@models");
 const { validationResult } = require("express-validator");
 
 const createBook = async (req, res) => {
@@ -24,9 +25,26 @@ const createBook = async (req, res) => {
 };
 
 const findAllBooks = async (req, res) => {
+  const {type} = req.query;
   // fetch all the users from the database
   try {
-    const data = await Book.findAll();
+    let data = [];
+    if (type === 'available') {
+      const assignedBooks = await Assign.findAll({
+        attributes: ['bookId'],
+      });
+      const assignedBookIds = assignedBooks.map((book) => book.bookId);
+      data = await Book.findAll({
+        where: {
+          id: {
+            [Op.notIn]: assignedBookIds,
+          },
+        },
+      });
+    } else {
+      data = await Book.findAll();
+    }
+   
 
     return res.send({ status: 200, data });
   } catch (error) {
