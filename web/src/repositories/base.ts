@@ -22,7 +22,7 @@ export default class Base<C, U> {
   };
 
   update = async (url: string, variables: U) => {
-    return this.http<U>(url, "patch", variables);
+    return this.http<U>(url, "put", variables);
   };
 
   delete = async (url: string) => {

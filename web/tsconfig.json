@@ -22,7 +22,10 @@
       "@config/*": ["config/*"],
       "@containers/*": ["containers/*"],
       "@contexts/*": ["contexts/*"],
-      "@utils/*": ["utils/*"]
+      "@data/*": ["data/*"],
+      "@repositories/*": ["repositories/*"],
+      "@ts-types/*": ["ts-types/*"],
+      "@utils/*": ["utils/*"],
     },
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -30,5 +33,5 @@
     "jsx": "react-jsx"
   },
   "exclude": ["node_modules", ".cache"],
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": ["**/*.ts", "**/*.tsx", "src/setupProxy.js"]
 }
