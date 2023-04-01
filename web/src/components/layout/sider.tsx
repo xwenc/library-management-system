@@ -17,7 +17,7 @@ const Sider: FC = (props) => {
       <div className={styles.brand}>
         <div className={styles.logo}>
           <Avatar style={{ marginRight: 8 }} />
-          <h1>Admin</h1>
+          <h1>Library System</h1>
         </div>
       </div>
 

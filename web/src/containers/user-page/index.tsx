@@ -1,8 +1,6 @@
 import React, { FC } from "react";
 import { Divider, Avatar, Dropdown, Menu, Space } from "antd";
 import { DownOutlined } from "@ant-design/icons";
-import Search from "@components/search";
-import Filter from "./filter";
 import Table from "@components/table";
 
 const imageSrc =
@@ -140,9 +138,6 @@ const PersonalPage: FC = () => {
 
   return (
     <>
-      <Search />
-      <Divider />
-      <Filter />
       <Divider />
       <Table tableProps={tableProps} />
     </>

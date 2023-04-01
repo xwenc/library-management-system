@@ -6,8 +6,9 @@ import {
   Navigate,
 } from "react-router-dom";
 import Layout from "@components/layout";
-import MerchantPage from "@containers/merchant-page";
-import PersonalPage from "@containers/personal-page";
+import BookPage from "@containers/book-page";
+import UserPage from "@containers/user-page";
+import AssignPage from "@containers/assign-page";
 import LoginPage from "@containers/login";
 import { AuthProvider, useAuth } from "@contexts/auth.context";
 import "@assets/app.less";
@@ -39,9 +40,10 @@ const App: FC = () => {
             </RequireAuth>
           }
         >
-          <Route index element={<PersonalPage />} />
-          <Route path="/personals" element={<PersonalPage />} />
-          <Route path="/merchants" element={<MerchantPage />} />
+          <Route index element={<UserPage />} />
+          <Route path="/users" element={<UserPage />} />
+          <Route path="/books" element={<BookPage />} />
+          <Route path="/assigns" element={<AssignPage />} />
         </Route>
         <Route path="/login" element={<LoginPage />} />
       </Routes>
