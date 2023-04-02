@@ -6,7 +6,7 @@ import { API_ENDPOINTS } from "@utils/api/endpoints";
 import { UserInput as IUserInput } from "@ts-types/generated";
 import { getErrorMessage } from "@utils/error-message";
 
-export const useUpdateShopMutation = (slug: string, cb?: () => void) => {
+export const useUpdateUserMutation = (slug: string, cb?: () => void) => {
   const queryClient = useQueryClient();
   const url = `${API_ENDPOINTS.USERS}/${slug}`;
   return useMutation((values: IUserInput) => User.edit(url, values), {

@@ -1,145 +1,161 @@
-import React, { FC } from "react";
-import { Divider, Avatar, Dropdown, Menu, Space } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import React, { FC, useState, useCallback, useEffect } from "react";
+import { Divider, Button, Space, Form } from "antd";
+import dayjs from "dayjs";
+import Modal from "@components/modal";
 import Table from "@components/table";
+import { User, UserInput } from "@ts-types/generated";
+import { useUserRecordsQuery } from "@data/user/use-records.query";
+import { useUserCreateMutation } from "@data/user/use-new.mutation";
+import { useDeleteUserMutation } from "@data/user/use-delete.mutation";
+import { useUpdateUserMutation } from "@data/user/use-update.mutation";
+import MyForm from "./form";
 
-const imageSrc =
-  "https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3&w=256&h=256&q=80";
+const { useForm } = Form;
 
 const PersonalPage: FC = () => {
+  const [id, setId] = useState<string>("");
+  const [initialValues, setInitialValues] = useState<UserInput>();
+  const [form] = useForm();
+  const [isOpenModal, setModal] = useState(false);
+  const { data, isLoading } = useUserRecordsQuery();
+  const { mutate: createUser, isLoading: isCreateUserLoading } =
+    useUserCreateMutation(() => {
+      setModal(false);
+    });
+  const { mutate: updateUser, isLoading: isUpdateUserLoading } =
+    useUpdateUserMutation(id, () => {
+      setModal(false);
+    });
+  const { mutate: deleteUser, isLoading: isDeleteUserLoading } =
+    useDeleteUserMutation(id);
+  const onSubmit = useCallback(
+    (values: UserInput) => {
+      console.log("id: ", id);
+      if (id) {
+        updateUser(values);
+      } else {
+        createUser({ variables: values });
+      }
+    },
+    [id, createUser, updateUser]
+  );
+  const onOk = useCallback(() => {
+    form.submit();
+  }, []);
+  const onDelete = useCallback(() => {
+    deleteUser();
+  }, [deleteUser]);
+
+  useEffect(() => {
+    form.setFieldsValue(
+      initialValues || {
+        firstName: "",
+        lastName: "",
+        email: "",
+      }
+    );
+  }, [initialValues]);
+
   const columns = [
-    {
-      title: "头像",
-      dataIndex: "avatar",
-      render: (text: string): React.ReactNode => (
-        <Avatar shape="square" src={text} />
-      ),
-    },
-    {
-      title: "名称",
-      dataIndex: "name",
-      render: (text: string): React.ReactNode => <span>{text}</span>,
-    },
     {
       title: "Id",
       dataIndex: "id",
     },
     {
-      title: "国家",
-      dataIndex: "country",
-    },
-    {
-      title: "电话",
-      dataIndex: "telephone",
-    },
-    {
-      title: "邮箱",
-      dataIndex: "email",
-    },
-    {
-      title: "注册时间",
-      dataIndex: "registerTime",
-    },
-    {
-      title: "个人状态",
-      dataIndex: "status",
-      render: (text: string): React.ReactNode => (
-        <div>
-          <Dropdown
-            trigger={["click"]}
-            overlay={
-              <Menu
-                items={[
-                  { key: "1", label: "Ok" },
-                  { key: "2", label: "RESTRINGIDO" },
-                  { key: "3", label: "SUSPENDIDO" },
-                ]}
-              />
-            }
-          >
-            <div>
-              <span>{text}</span>
-              <DownOutlined style={{ marginLeft: 8 }} />
-            </div>
-          </Dropdown>
-        </div>
+      title: "Name",
+      dataIndex: "firstName",
+      render: (_: string, record: User): React.ReactNode => (
+        <span>{`${record.firstName} ${record.lastName}`}</span>
       ),
     },
     {
-      title: "关联店铺",
-      dataIndex: "shop",
-    },
-  ];
-  const dataSource = [
-    {
-      avatar: imageSrc,
-      name: "Alexis",
-      id: 1,
-      country: "China",
-      telephone: "123456789",
-      email: "123@124.com",
-      registerTime: "2020-01-01",
-      status: "OK",
-      shop: "店铺1",
-      key: "1",
+      title: "Email",
+      dataIndex: "email",
     },
     {
-      avatar: imageSrc,
-      name: "Carlos",
-      id: 2,
-      country: "China",
-      telephone: "123456789",
-      email: "123@124.com",
-      registerTime: "2020-01-01",
-      status: "RESTRINGIDO",
-      shop: "店铺1",
-      key: "2",
+      title: "Created At",
+      dataIndex: "createdAt",
+      render: (text: string): React.ReactNode => (
+        <span>{dayjs(text).format("DD MMM YYYY HH:mmA")}</span>
+      ),
     },
     {
-      avatar: imageSrc,
-      name: "Alexis",
-      id: 3,
-      country: "China",
-      telephone: "123456789",
-      email: "123@124.com",
-      registerTime: "2020-01-01",
-      status: "OK",
-      shop: "店铺1",
-      key: "3",
-    },
-    {
-      avatar: imageSrc,
-      name: "Alexis",
-      id: 4,
-      country: "China",
-      telephone: "123456789",
-      email: "123@124.com",
-      registerTime: "2020-01-01",
-      status: "RESTRINGIDO",
-      shop: "店铺1",
-      key: "4",
-    },
-    {
-      avatar: imageSrc,
-      name: "Alexis",
-      id: 5,
-      country: "China",
-      telephone: "123456789",
-      email: "123@124.com",
-      registerTime: "2020-01-01",
-      status: "SUSPENDIDO",
-      shop: "店铺1",
+      title: "Action",
+      dataIndex: "id",
+      align: "right",
+      render: (text: string, record: User): React.ReactNode => (
+        <Space wrap>
+          <Button
+            type="primary"
+            onClick={() => {
+              setInitialValues({
+                lastName: record.lastName,
+                firstName: record.firstName,
+                email: record.email,
+              });
+              setId(text);
+              setModal(true);
+            }}
+          >
+            Edit
+          </Button>
+          <Button
+            type="primary"
+            danger
+            loading={isDeleteUserLoading}
+            onClick={() => {
+              setId(text);
+              // eslint-disable-next-line no-restricted-globals
+              if (confirm("Are you sure to delete this user?")) {
+                onDelete();
+              } else {
+                setId("");
+              }
+            }}
+          >
+            Delete
+          </Button>
+        </Space>
+      ),
     },
   ];
   const tableProps = {
     columns,
-    dataSource,
+    dataSource: data?.data,
+    loading: isLoading,
   };
 
   return (
     <>
+      <Space align="center" size={48}>
+        <h3 style={{ marginBottom: 0 }}>User List</h3>
+        <Button
+          type="primary"
+          onClick={() => {
+            setId("");
+            setInitialValues(undefined);
+            setModal(true);
+          }}
+        >
+          Create
+        </Button>
+      </Space>
       <Divider />
       <Table tableProps={tableProps} />
+      <Modal
+        isOpenModal={isOpenModal}
+        setModal={setModal}
+        title={id ? "Edit User" : "Create User"}
+        content={
+          <MyForm
+            initialValues={initialValues}
+            onSubmit={onSubmit}
+            form={form}
+          />
+        }
+        onOk={onOk}
+        confirmLoading={isCreateUserLoading || isUpdateUserLoading}
+      />
     </>
   );
 };

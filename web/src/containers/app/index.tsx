@@ -1,10 +1,6 @@
-import React, { FC } from "react";
-import {
-  Routes,
-  Route,
-  useLocation,
-  Navigate,
-} from "react-router-dom";
+import React, { FC, useRef } from "react";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Layout from "@components/layout";
 import BookPage from "@containers/book-page";
 import UserPage from "@containers/user-page";
@@ -13,10 +9,9 @@ import LoginPage from "@containers/login";
 import { AuthProvider, useAuth } from "@contexts/auth.context";
 import "@assets/app.less";
 
-const RequireAuth: FC<{ children: JSX.Element }> = ({children}) => {
+const RequireAuth: FC<{ children: JSX.Element }> = ({ children }) => {
   let auth = useAuth();
   let location = useLocation();
-
   if (!auth.user) {
     // Redirect them to the /login page, but save the current location they were
     // trying to go to when they were redirected. This allows us to send them
@@ -26,28 +21,34 @@ const RequireAuth: FC<{ children: JSX.Element }> = ({children}) => {
   }
 
   return children;
-}
+};
 
 const App: FC = () => {
+  const queryClientRef = useRef<any>(null);
+  if (!queryClientRef.current) {
+    queryClientRef.current = new QueryClient();
+  }
   return (
-    <AuthProvider>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <RequireAuth>
-              <Layout />
-            </RequireAuth>
-          }
-        >
-          <Route index element={<UserPage />} />
-          <Route path="/users" element={<UserPage />} />
-          <Route path="/books" element={<BookPage />} />
-          <Route path="/assigns" element={<AssignPage />} />
-        </Route>
-        <Route path="/login" element={<LoginPage />} />
-      </Routes>
-    </AuthProvider>
+    <QueryClientProvider client={queryClientRef.current}>
+      <AuthProvider>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <RequireAuth>
+                <Layout />
+              </RequireAuth>
+            }
+          >
+            <Route index element={<UserPage />} />
+            <Route path="/users" element={<UserPage />} />
+            <Route path="/books" element={<BookPage />} />
+            <Route path="/assigns" element={<AssignPage />} />
+          </Route>
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 };
 

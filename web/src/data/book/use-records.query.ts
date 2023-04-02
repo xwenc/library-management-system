@@ -11,7 +11,13 @@ const fetchBookRecords = async ({ queryKey }: QueryParamsType) => {
 };
 
 const useBookRecordsQuery = () => {
-  return useQuery<TBook[], Error>([API_ENDPOINTS.BOOKS], fetchBookRecords, {
+  return useQuery<
+    {
+      status: number;
+      data: TBook[];
+    },
+    Error
+  >([API_ENDPOINTS.BOOKS], fetchBookRecords, {
     refetchOnWindowFocus: false,
   });
 };

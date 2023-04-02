@@ -11,7 +11,10 @@ const fetchUserRecords = async ({ queryKey }: QueryParamsType) => {
 };
 
 const useUserRecordsQuery = () => {
-  return useQuery<TUser[], Error>([API_ENDPOINTS.USERS], fetchUserRecords, {
+  return useQuery<{
+    status: number;
+    data: TUser[];
+  }, Error>([API_ENDPOINTS.USERS], fetchUserRecords, {
     refetchOnWindowFocus: false,
   });
 };

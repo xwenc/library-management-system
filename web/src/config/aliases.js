@@ -4,7 +4,10 @@ const aliases = (prefix = `src`) => ({
   '@config': `${prefix}/config`,
   '@containers': `${prefix}/containers`,
   '@contexts': `${prefix}/contexts`,
-  '@utils': `${prefix}/utils`
+  '@data': `${prefix}/data`,
+  '@repositories': `${prefix}/repositories`,
+  '@ts-types': `${prefix}/ts-types`,
+  '@utils': `${prefix}/utils`,
 });
 
 module.exports = aliases;
