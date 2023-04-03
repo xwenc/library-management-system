@@ -3,48 +3,38 @@ import { Divider, Button, Space, Form } from "antd";
 import dayjs from "dayjs";
 import Modal from "@components/modal";
 import Table from "@components/table";
-import { Book, BookInput } from "@ts-types/generated";
-import { useBookRecordsQuery } from "@data/book/use-records.query";
-import { useBookNewMutation } from "@data/book/use-new.mutation";
-import { useDeleteBookMutation } from "@data/book/use-delete.mutation";
-import { useUpdateBookMutation } from "@data/book/use-update.mutation";
+import { Assign, AssignInput } from "@ts-types/generated";
+import { useAssignRecordsQuery } from "@data/assign/use-records.query";
+import { useAssignNewMutation } from "@data/assign/use-new.mutation";
+import { useDeleteAssignMutation } from "@data/assign/use-delete.mutation";
 import MyForm from "./form";
 
 const { useForm } = Form;
 
 const PersonalPage: FC = () => {
   const [id, setId] = useState<string>("");
-  const [initialValues, setInitialValues] = useState<BookInput>();
+  const [initialValues, setInitialValues] = useState<AssignInput>();
   const [form] = useForm();
   const [isOpenModal, setModal] = useState(false);
-  const { data, isLoading } = useBookRecordsQuery();
-  const { mutate: createBook, isLoading: isCreateBookLoading } =
-  useBookNewMutation(() => {
+  const { data, isLoading } = useAssignRecordsQuery();
+  const { mutate: createAssign, isLoading: isCreateAssignLoading } =
+    useAssignNewMutation(() => {
       setModal(false);
     });
-  const { mutate: updateBook, isLoading: isUpdateBookLoading } =
-  useUpdateBookMutation(id, () => {
-      setModal(false);
-    });
-  const { mutate: deleteBook, isLoading: isDeleteBookLoading } =
-  useDeleteBookMutation(id);
+  const { mutate: deleteAssign, isLoading: isDeleteAssignLoading } =
+    useDeleteAssignMutation(id);
   const onSubmit = useCallback(
-    (values: BookInput) => {
-      console.log("id: ", id);
-      if (id) {
-        updateBook(values);
-      } else {
-        createBook({ variables: values });
-      }
+    (values: AssignInput) => {
+      createAssign({ variables: values });
     },
-    [id, createBook, updateBook]
+    [createAssign]
   );
   const onOk = useCallback(() => {
     form.submit();
   }, []);
   const onDelete = useCallback(() => {
-    deleteBook();
-  }, [deleteBook]);
+    deleteAssign();
+  }, [deleteAssign]);
 
   useEffect(() => {
     form.setFieldsValue(
@@ -62,15 +52,26 @@ const PersonalPage: FC = () => {
       dataIndex: "id",
     },
     {
-      title: "Name",
-      dataIndex: "name",
-      render: (_: string, record: Book): React.ReactNode => (
-        <span>{`${record.title} - ${record.author}`}</span>
+      title: "Book",
+      dataIndex: "book",
+      render: (text: { title: string; author: string }): React.ReactNode => (
+        <span>{`${text.title} - ${text.author}`}</span>
       ),
     },
     {
-      title: "Description",
-      dataIndex: "description",
+      title: "User",
+      dataIndex: "user",
+      render: (
+        text: {
+          firstName: string;
+          lastName: string;
+        } = {
+          firstName: "",
+          lastName: "",
+        }
+      ): React.ReactNode => (
+        <span>{text ? `${text?.firstName} - ${text?.lastName}` : null}</span>
+      ),
     },
     {
       title: "Created At",
@@ -83,26 +84,12 @@ const PersonalPage: FC = () => {
       title: "Action",
       dataIndex: "id",
       align: "right",
-      render: (text: string, record: Book): React.ReactNode => (
+      render: (text: string, record: Assign): React.ReactNode => (
         <Space wrap>
           <Button
             type="primary"
-            onClick={() => {
-              setInitialValues({
-                title: record.title,
-                author: record.author,
-                description: record.description,
-              });
-              setId(text);
-              setModal(true);
-            }}
-          >
-            Edit
-          </Button>
-          <Button
-            type="primary"
             danger
-            loading={isDeleteBookLoading}
+            loading={isDeleteAssignLoading}
             onClick={() => {
               setId(text);
               // eslint-disable-next-line no-restricted-globals
@@ -128,7 +115,7 @@ const PersonalPage: FC = () => {
   return (
     <>
       <Space align="center" size={48}>
-        <h3 style={{ marginBottom: 0 }}>Book List</h3>
+        <h3 style={{ marginBottom: 0 }}>Assign List</h3>
         <Button
           type="primary"
           onClick={() => {
@@ -145,7 +132,7 @@ const PersonalPage: FC = () => {
       <Modal
         isOpenModal={isOpenModal}
         setModal={setModal}
-        title={id ? "Edit Book" : "Create Book"}
+        title="Create Assign"
         content={
           <MyForm
             initialValues={initialValues}
@@ -154,7 +141,7 @@ const PersonalPage: FC = () => {
           />
         }
         onOk={onOk}
-        confirmLoading={isCreateBookLoading || isUpdateBookLoading}
+        confirmLoading={isCreateAssignLoading}
       />
     </>
   );

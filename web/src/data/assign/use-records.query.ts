@@ -17,7 +17,7 @@ const useAssignRecordsQuery = () => {
       data: TAssign[];
     },
     Error
-  >([API_ENDPOINTS.BOOKS], fetchAssignRecords, {
+  >([API_ENDPOINTS.ASSIGNS], fetchAssignRecords, {
     refetchOnWindowFocus: false,
   });
 };

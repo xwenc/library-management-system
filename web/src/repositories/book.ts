@@ -2,7 +2,7 @@
  * Request API for book
  */
 
-import {  BookInput } from "@ts-types/generated";
+import { BookInput } from "@ts-types/generated";
 import Base from "./base";
 
 class Book extends Base<BookInput, {}> {
@@ -16,10 +16,10 @@ class Book extends Base<BookInput, {}> {
 
   edit = async (url: string, variables: BookInput) => {
     return this.update(url, variables);
-  }
+  };
 
-  records = async (url: string) => { 
-    return this.all(url);
+  records = async (url: string, option: { type?: string } = {}) => {
+    return this.http(url, "get", { params: { ...option } });
   };
 }
 

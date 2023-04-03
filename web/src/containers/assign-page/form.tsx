@@ -1,19 +1,23 @@
-import { Form, Input } from "antd";
-import { BookInput } from "@ts-types/generated";
-
+import { Form } from "antd";
+import map from "lodash/map";
+import { AssignInput } from "@ts-types/generated";
+import { Option, Select } from "@components/form/select";
+import { useBookRecordsQuery } from "@data/book/use-records.query";
+import { useUserRecordsQuery } from "@data/user/use-records.query";
 interface Iprops {
-  onSubmit: (values: BookInput) => void;
-  initialValues?: BookInput;
+  onSubmit: (values: AssignInput) => void;
+  initialValues?: AssignInput;
   form: any;
 }
 
-const defaultValues: BookInput = {
-  title: "",
-  author: "",
-  description: "",
+const defaultValues: AssignInput = {
+  bookId: "",
+  userId: "",
 };
 
 const MyForm: React.FC<Iprops> = ({ onSubmit, initialValues, form }) => {
+  const { data: books } = useBookRecordsQuery({ type: "available" });
+  const { data: users } = useUserRecordsQuery();
   return (
     <Form
       layout="vertical"
@@ -22,31 +26,23 @@ const MyForm: React.FC<Iprops> = ({ onSubmit, initialValues, form }) => {
       form={form}
       initialValues={initialValues ?? defaultValues}
     >
-      <Form.Item
-        name="title"
-        label="Title"
-        rules={[{ required: true, message: "Please input your title!" }]}
-      >
-        <Input placeholder="" />
+      <Form.Item name="bookId" label="Book" className="field-horizon mb-0">
+        <Select allowClear={false}>
+          {map(books?.data, (item, index) => (
+            <Option key={index} value={item.id}>
+              {`${item.title} - ${item.author}`}
+            </Option>
+          ))}
+        </Select>
       </Form.Item>
-      <Form.Item
-        name="author"
-        label="Author"
-        rules={[{ required: true, message: "Please input your author!" }]}
-      >
-        <Input placeholder="" />
-      </Form.Item>
-      <Form.Item
-        name="description"
-        label="Description"
-        rules={[
-          {
-            required: true,
-            message: "Please input your description!",
-          },
-        ]}
-      >
-        <Input placeholder="" />
+      <Form.Item name="userId" label="User" className="field-horizon mb-0">
+        <Select allowClear={false}>
+          {map(users?.data, (item, index) => (
+            <Option key={index} value={item.id}>
+              {`${item.firstName} ${item.lastName}`}
+            </Option>
+          ))}
+        </Select>
       </Form.Item>
     </Form>
   );

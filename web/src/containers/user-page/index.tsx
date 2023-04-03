@@ -1,9 +1,10 @@
 import React, { FC, useState, useCallback, useEffect } from "react";
 import { Divider, Button, Space, Form } from "antd";
+import map from "lodash/map";
 import dayjs from "dayjs";
 import Modal from "@components/modal";
 import Table from "@components/table";
-import { User, UserInput } from "@ts-types/generated";
+import { User, UserInput, Assign } from "@ts-types/generated";
 import { useUserRecordsQuery } from "@data/user/use-records.query";
 import { useUserCreateMutation } from "@data/user/use-new.mutation";
 import { useDeleteUserMutation } from "@data/user/use-delete.mutation";
@@ -71,6 +72,17 @@ const PersonalPage: FC = () => {
     {
       title: "Email",
       dataIndex: "email",
+    },
+    {
+      title: "Book borrowed",
+      dataIndex: "assigns",
+      render: (assigns: Assign[]): React.ReactNode => (
+        <div>
+          {map(assigns, (assign, index) => (
+            <div key={index}>{assign?.book?.title}</div>
+          ))}
+        </div>
+      ),
     },
     {
       title: "Created At",
