@@ -87,6 +87,7 @@ const deleteUser = async (req, res) => {
       res.send({ status: 409, data: "User doesn't exist" });
       return;
     }
+    await Assign.destroy({ where: { userId } });
     await User.destroy({ where: { id: userId } });
     res.status(200).json({ data: deleteUserData, message: "delete" });
   } catch (error) {

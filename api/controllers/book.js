@@ -100,6 +100,7 @@ const deleteBook = async (req, res) => {
       res.send({ status: 409, data: "Book doesn't exist" });
       return;
     }
+    await Assign.destroy({ where: { bookId } });
     await Book.destroy({ where: { id: bookId } });
     res.status(200).json({ data: deleteBookData, message: "delete" });
   } catch (error) {
