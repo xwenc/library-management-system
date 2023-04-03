@@ -1,166 +1,163 @@
-import React, { FC } from "react";
-import { Divider, Avatar, Dropdown, Menu, Space } from "antd";
-import { DownOutlined } from "@ant-design/icons";
+import React, { FC, useState, useCallback, useEffect } from "react";
+import { Divider, Button, Space, Form } from "antd";
+import dayjs from "dayjs";
+import Modal from "@components/modal";
 import Table from "@components/table";
+import { Book, BookInput } from "@ts-types/generated";
+import { useBookRecordsQuery } from "@data/book/use-records.query";
+import { useBookNewMutation } from "@data/book/use-new.mutation";
+import { useDeleteBookMutation } from "@data/book/use-delete.mutation";
+import { useUpdateBookMutation } from "@data/book/use-update.mutation";
+import MyForm from "./form";
 
-const imageSrc =
-  "https://upload.wikimedia.org/wikipedia/commons/f/fd/Zara_Logo.svg";
+const { useForm } = Form;
 
-const MerchantPage: FC = () => {
+const PersonalPage: FC = () => {
+  const [id, setId] = useState<string>("");
+  const [initialValues, setInitialValues] = useState<BookInput>();
+  const [form] = useForm();
+  const [isOpenModal, setModal] = useState(false);
+  const { data, isLoading } = useBookRecordsQuery();
+  const { mutate: createBook, isLoading: isCreateBookLoading } =
+  useBookNewMutation(() => {
+      setModal(false);
+    });
+  const { mutate: updateBook, isLoading: isUpdateBookLoading } =
+  useUpdateBookMutation(id, () => {
+      setModal(false);
+    });
+  const { mutate: deleteBook, isLoading: isDeleteBookLoading } =
+  useDeleteBookMutation(id);
+  const onSubmit = useCallback(
+    (values: BookInput) => {
+      console.log("id: ", id);
+      if (id) {
+        updateBook(values);
+      } else {
+        createBook({ variables: values });
+      }
+    },
+    [id, createBook, updateBook]
+  );
+  const onOk = useCallback(() => {
+    form.submit();
+  }, []);
+  const onDelete = useCallback(() => {
+    deleteBook();
+  }, [deleteBook]);
+
+  useEffect(() => {
+    form.setFieldsValue(
+      initialValues || {
+        title: "",
+        author: "",
+        description: "",
+      }
+    );
+  }, [initialValues]);
+
   const columns = [
-    {
-      title: "图片",
-      dataIndex: "avatar",
-      render: (text: string): React.ReactNode => (
-        <img alt="" src={text} style={{ height: 24 }} />
-      ),
-    },
-    {
-      title: "名称",
-      dataIndex: "name",
-      render: (text: string): React.ReactNode => <span>{text}</span>,
-    },
     {
       title: "Id",
       dataIndex: "id",
     },
     {
-      title: "被举报",
-      dataIndex: "reported",
-    },
-    {
-      title: "最新被举报",
-      dataIndex: "latest_reported",
-    },
-    {
-      title: "店铺类型",
-      dataIndex: "shop_type",
-    },
-    {
-      title: "行业类型",
-      dataIndex: "industry_type",
-    },
-    {
-      title: "子分类",
-      dataIndex: "sub_category",
-    },
-    {
-      title: "注册时间",
-      dataIndex: "register_time",
-    },
-    {
-      title: "店铺状态",
-      dataIndex: "status",
-      render: (text: string): React.ReactNode => (
-        <div>
-          <Dropdown
-            trigger={["click"]}
-            overlay={
-              <Menu
-                items={[
-                  { key: "1", label: "Ok" },
-                  { key: "2", label: "RESTRINGIDO" },
-                  { key: "3", label: "SUSPENDIDO" },
-                ]}
-              />
-            }
-          >
-            <div>
-              <span>{text}</span>
-              <DownOutlined style={{ marginLeft: 8 }} />
-            </div>
-          </Dropdown>
-        </div>
+      title: "Name",
+      dataIndex: "name",
+      render: (_: string, record: Book): React.ReactNode => (
+        <span>{`${record.title} - ${record.author}`}</span>
       ),
     },
     {
-      title: "相关账户",
-      dataIndex: "account",
-    },
-  ];
-  const dataSource = [
-    {
-      avatar: imageSrc,
-      name: "ZARA",
-      id: 1,
-      reported: "12",
-      latest_reported: "2",
-      shop_type: "批发店",
-      industry_type: "服装",
-      sub_category: "女装",
-      register_time: "2020-01-01",
-      status: "OK",
-      account: "Alexis",
-      key: "1",
+      title: "Description",
+      dataIndex: "description",
     },
     {
-      avatar: imageSrc,
-      name: "ZARA",
-      id: 2,
-      reported: "12",
-      latest_reported: "2",
-      shop_type: "批发店",
-      industry_type: "服装",
-      sub_category: "女装",
-      register_time: "2020-01-01",
-      status: "OK",
-      account: "Alexis",
-      key: "2",
+      title: "Created At",
+      dataIndex: "createdAt",
+      render: (text: string): React.ReactNode => (
+        <span>{dayjs(text).format("DD MMM YYYY HH:mmA")}</span>
+      ),
     },
     {
-      avatar: imageSrc,
-      name: "ZARA",
-      id: 3,
-      reported: "12",
-      latest_reported: "2",
-      shop_type: "批发店",
-      industry_type: "服装",
-      sub_category: "女装",
-      register_time: "2020-01-01",
-      status: "OK",
-      account: "Alexis",
-      key: "3",
-    },
-    {
-      avatar: imageSrc,
-      name: "ZARA",
-      id: 4,
-      reported: "12",
-      latest_reported: "2",
-      shop_type: "批发店",
-      industry_type: "服装",
-      sub_category: "女装",
-      register_time: "2020-01-01",
-      status: "OK",
-      account: "Alexis",
-      key: "4",
-    },
-    {
-      avatar: imageSrc,
-      name: "ZARA",
-      id: 5,
-      reported: "12",
-      latest_reported: "2",
-      shop_type: "批发店",
-      industry_type: "服装",
-      sub_category: "女装",
-      register_time: "2020-01-01",
-      status: "OK",
-      account: "Alexis",
-      key: "5",
+      title: "Action",
+      dataIndex: "id",
+      align: "right",
+      render: (text: string, record: Book): React.ReactNode => (
+        <Space wrap>
+          <Button
+            type="primary"
+            onClick={() => {
+              setInitialValues({
+                title: record.title,
+                author: record.author,
+                description: record.description,
+              });
+              setId(text);
+              setModal(true);
+            }}
+          >
+            Edit
+          </Button>
+          <Button
+            type="primary"
+            danger
+            loading={isDeleteBookLoading}
+            onClick={() => {
+              setId(text);
+              // eslint-disable-next-line no-restricted-globals
+              if (confirm("Are you sure to delete this book?")) {
+                onDelete();
+              } else {
+                setId("");
+              }
+            }}
+          >
+            Delete
+          </Button>
+        </Space>
+      ),
     },
   ];
   const tableProps = {
     columns,
-    dataSource,
+    dataSource: data?.data,
+    loading: isLoading,
   };
 
   return (
     <>
+      <Space align="center" size={48}>
+        <h3 style={{ marginBottom: 0 }}>Book List</h3>
+        <Button
+          type="primary"
+          onClick={() => {
+            setId("");
+            setInitialValues(undefined);
+            setModal(true);
+          }}
+        >
+          Create
+        </Button>
+      </Space>
       <Divider />
       <Table tableProps={tableProps} />
+      <Modal
+        isOpenModal={isOpenModal}
+        setModal={setModal}
+        title={id ? "Edit Book" : "Create Book"}
+        content={
+          <MyForm
+            initialValues={initialValues}
+            onSubmit={onSubmit}
+            form={form}
+          />
+        }
+        onOk={onOk}
+        confirmLoading={isCreateBookLoading || isUpdateBookLoading}
+      />
     </>
   );
 };
 
-export default MerchantPage;
+export default PersonalPage;

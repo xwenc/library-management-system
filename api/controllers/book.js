@@ -77,15 +77,15 @@ const updateBook = async (req, res) => {
       return;
     }
 
-    const updateBookData = await User.findByPk(bookId);
+    const updateBookData = await Book.findByPk(bookId);
     if (!updateBookData) {
       res.send({ status: 409, data: "Book doesn't exist" });
       return;
     }
 
-    await User.update(bookData, { where: { id: bookId } });
+    await Book.update(bookData, { where: { id: bookId } });
 
-    const updateBook = await User.findByPk(bookId);
+    const updateBook = await Book.findByPk(bookId);
     res.status(200).json({ data: updateBook, message: "update" });
   } catch (error) {
     return res.send({ status: 404, data: error.message });
@@ -95,7 +95,7 @@ const updateBook = async (req, res) => {
 const deleteBook = async (req, res) => {
   try {
     const bookId = Number(req.params.id);
-    const deleteBookData = await User.findByPk(bookId);
+    const deleteBookData = await Book.findByPk(bookId);
     if (!deleteBookData) {
       res.send({ status: 409, data: "Book doesn't exist" });
       return;

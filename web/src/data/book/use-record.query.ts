@@ -1,10 +1,10 @@
-import User from "@repositories/user";
+import Book from "@repositories/book";
 import { QueryKey, useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { Book as TBook } from "@ts-types/generated";
 import { API_ENDPOINTS } from "@utils/api/endpoints";
 
 export const fetchBook = async (slug: string) => {
-  const { data } = await User.find(`${API_ENDPOINTS.BOOKS}/${slug}`);
+  const { data } = await Book.find(`${API_ENDPOINTS.BOOKS}/${slug}`);
   return data
 };
 
